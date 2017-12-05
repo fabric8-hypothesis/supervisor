@@ -7,21 +7,21 @@ DEFAULT_TAG=latest
 all: fast-docker-build
 
 docker-build:
-    docker build --no-cache -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) .
+	docker build --no-cache -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) .
 
 docker-build-tests: docker-build
-    docker build --no-cache -t supervisor-tests -f Dockerfile.tests .
+	docker build --no-cache -t supervisor-tests -f Dockerfile.tests .
 
 fast-docker-build:
-    docker build -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) .
+	docker build -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) .
 
-fast-docker-build-tests:
-    docker build -t supervisor-tests -f Dockerfile.tests .
+fast-docker-build-tests: fast-docker-build
+	docker build -t supervisor-tests -f Dockerfile.tests .
 
 test: fast-docker-build-tests
 
 get-image-name:
-    @echo $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG)
+	@echo $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG)
 
 get-image-repository:
-    @echo $(REPOSITORY)
+	@echo $(REPOSITORY)
