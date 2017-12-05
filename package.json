@@ -1,0 +1,31 @@
+{
+  "name": "supervisor",
+  "version": "0.0.1",
+  "description": "Node.js applicaiton that performs configured experiments on data ingested by hdd scouts and enable users verify(or disprove) their hypothesis.",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "express": "^4.16.2",
+    "mocha": "^2.4.5"
+  },
+  "engine": {
+    "node": "*",
+    "npm": "*"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "test": "IP=0.0.0.0 PORT=3030 mocha --timeout 5000 tests/*_test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fabric8-hdd/supervisor"
+  },
+  "author": "Anmol Babu <anmolbudugutta@gmail.com>",
+  "license": "Apache License 2.0",
+  "bugs": {
+    "url": "https://github.com/fabric8-hdd/supervisor/issues"
+  },
+  "homepage": "https://github.com/fabric8-hdd/supervisor"
+}

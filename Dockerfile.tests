@@ -1,0 +1,11 @@
+FROM anmolbabu/supervisor
+MAINTAINER Anmol Babu <anmolbudugutta@gmail.com>
+
+COPY . /supervisor
+WORKDIR /supervisor
+
+EXPOSE 9090
+
+RUN npm install
+RUN nohup npm start & > /dev/null
+RUN npm test
