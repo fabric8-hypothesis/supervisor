@@ -27,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/fabric8-hdd/supervisor/issues"
   },
-  "homepage": "https://github.com/fabric8-hdd/supervisor"
+  "homepage": "https://github.com/fabric8-hdd/supervisor",
+  "devDependencies": {
+    "eslint": "^4.12.1"
+  }
 }
