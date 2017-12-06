@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: hdd-supervisor
+metadata:
+  name: hdd-supervisor
+  annotations:
+    description: hdd-supervisor
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    generateName: hdd-supervisor
+    labels:
+      app: hdd-supervisor
+      deploymentconfig: hdd-supervisor
+    name: supervisor
+    namespace: hdd-supervisor
+  spec:
+    containers:
+      - image: >-
+          anmolbabu/supervisor
+        imagePullPolicy: Always
+        name: hdd-supervisor
+        ports:
+          - containerPort: 9090
+            protocol: TCP
+        resources: {}
+        securityContext:
+          privileged: false
+    dnsPolicy: ClusterFirst
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: hdd-supervisor
+    name: hdd-supervisor
+    namespace: hdd-supervisor
+  spec:
+    ports:
+      - name: 9090-tcp
+        port: 9090
+        protocol: TCP
+        targetPort: 9090
+    selector:
+      deploymentconfig: hdd-supervisor
+- apiVersion: v1
+  kind: Route
+  metadata:
+    name: hdd-supervisor
+    namespace: hdd-supervisor
+  spec:
+    port:
+      targetPort: 9090-tcp
+    to:
+      kind: Service
+      name: hdd-supervisor
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: hdd-supervisor
+    name: hdd-supervisor
+    namespace: hdd-supervisor
+  spec:
+    replicas: 1
+    selector:
+      app: hdd-supervisor
+      deploymentconfig: hdd-supervisor
+    template:
+      metadata:
+        labels:
+          app: hdd-supervisor
+          deploymentconfig: hdd-supervisor
+      spec:
+        containers:
+          - image: >-
+              anmolbabu/supervisor
+            imagePullPolicy: Always
+            name: hdd-supervisor
+            ports:
+              - containerPort: 9090
+                protocol: TCP
+            resources: {}
+        dnsPolicy: ClusterFirst
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - hdd-supervisor
+          from:
+            kind: ImageStreamTag
+            name: 'supervisor:latest'
+            namespace: hdd-supervisor
+        type: ImageChange
