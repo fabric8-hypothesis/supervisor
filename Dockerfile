@@ -1,5 +1,5 @@
 FROM node:carbon
-MAINTAINER Anmol Babu <anmolbudugutta@gmail.com>
+LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
 # Create app directory
 WORKDIR /usr/src/app
