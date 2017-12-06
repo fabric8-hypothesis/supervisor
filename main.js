@@ -2,7 +2,7 @@
 var express = require("express"),
 	bodyParser = require("body-parser"),
 	app     = express()
-    
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -16,3 +16,5 @@ var server = app.listen(port, function () {
 	var port = server.address().port
 	console.log("App now running on port", port)
 })
+
+module.exports = server
