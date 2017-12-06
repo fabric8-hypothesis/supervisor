@@ -4,11 +4,7 @@
   "description": "Node.js applicaiton that performs configured experiments on data ingested by hdd scouts and enable users verify(or disprove) their hypothesis.",
   "main": "main.js",
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "chai": "^3.5.0",
-    "chai-http": "^2.0.1",
-    "express": "^4.16.2",
-    "mocha": "^2.4.5"
+    "express": "^4.16.2"
   },
   "engine": {
     "node": "*",
@@ -29,6 +25,9 @@
   },
   "homepage": "https://github.com/fabric8-hdd/supervisor",
   "devDependencies": {
-    "eslint": "^4.12.1"
+    "eslint": "^4.12.1",
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "mocha": "^2.4.5"    
   }
 }

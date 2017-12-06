@@ -15,3 +15,5 @@ var server = app.listen(port, function () {
 	var port = server.address().port
 	console.log("App now running on port", port)
 })
+
+module.exports = server
