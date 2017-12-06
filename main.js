@@ -1,10 +1,9 @@
 //  OpenShift sample Node application
 var express = require("express"),
-	bodyParser = require("body-parser"),
 	app     = express()
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 9090,
 	ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0"

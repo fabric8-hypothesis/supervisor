@@ -4,7 +4,6 @@
   "description": "Node.js applicaiton that performs configured experiments on data ingested by hdd scouts and enable users verify(or disprove) their hypothesis.",
   "main": "main.js",
   "dependencies": {
-    "body-parser": "^1.18.2",
     "express": "^4.16.2"
   },
   "engine": {
