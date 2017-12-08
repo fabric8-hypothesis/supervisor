@@ -35,3 +35,28 @@ describe("Test data collection api", function() {
 	})
 
 })
+
+describe("Test readiness and liveness api",function(){
+	
+	describe("POST to /api/v1.0/readiness", () => {
+		it(" should return 200", function(done){
+			chai.request(server)
+				.get("/api/v1.0/readiness")
+				.end(function(err, res) {
+					res.should.have.status(200)
+					done()
+				})
+		})
+	})
+
+	describe("POST to /api/v1.0/liveness", () => {
+		it(" should return 200", function(done){
+			chai.request(server)
+				.get("/api/v1.0/liveness")
+				.end(function(err, res) {
+					res.should.have.status(200)
+					done()
+				})
+		})
+	})
+})
