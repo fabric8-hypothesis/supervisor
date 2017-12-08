@@ -23,9 +23,31 @@ objects:
         imagePullPolicy: Always
         name: hdd-supervisor
         ports:
-          - containerPort: 9090
-            protocol: TCP
-        resources: {}
+        - containerPort: 9090
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /api/v1.0/readiness
+            port: 9090
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/v1.0/liveness
+            port: 9090
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          timeoutSeconds: 10
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
         securityContext:
           privileged: false
     dnsPolicy: ClusterFirst
