@@ -11,6 +11,16 @@ var appRouter = function(app) {
 			res.status(400)
 			res.send(err.toString())
 		})
+	}),
+
+	app.get("/api/v1.0/readiness", function(req , res){
+		res.status(200);
+		res.end();
+	}),
+
+	app.get("/api/v1.0/liveness", function(req , res){
+		res.status(200);
+		res.end();
 	})
 }
 
