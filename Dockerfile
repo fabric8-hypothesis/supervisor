@@ -8,9 +8,9 @@ WORKDIR /usr/src/app
 COPY package.json ./package.json
 COPY package-lock.json ./package-lock.json
 
-RUN npm install
-# If you are building your code for production
-# RUN npm install --only=production
+RUN npm install --only=production
+# If you are building your code for testing
+# RUN npm install
 
 # Bundle app source
 COPY . .
