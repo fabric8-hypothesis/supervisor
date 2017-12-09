@@ -1,19 +1,34 @@
-FROM node:carbon
+FROM centos:centos7
 LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
-# Create app directory
+# Setup App Dir
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package.json ./package.json
-COPY package-lock.json ./package-lock.json
+ADD package.json ./package.json
+ADD package-lock.json ./package-lock.json
 
-RUN npm install
-# If you are building your code for production
-# RUN npm install --only=production
+#Install nodejs
+RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - && \
+    yum install nodejs -y && \
+    yum clean all
+
+# Install app
+RUN npm install --production
 
 # Bundle app source
-COPY . .
+ADD . .
 
+# Setup non-root user node
+RUN groupadd -r node \
+    && useradd -r -g node node
+
+# Switch to non-root user
+USER node
+
+# Expose port
 EXPOSE 9090
+
+# Start app
 CMD [ "npm", "start" ]
