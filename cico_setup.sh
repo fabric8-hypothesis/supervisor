@@ -38,8 +38,6 @@ push_image() {
     image_repository=$(make get-image-repository)
     short_commit=$(git rev-parse --short=7 HEAD)
     push_registry="push.registry.devshift.net"
-    # Only for testing
-    push_registry="hub.docker.com"
 
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
