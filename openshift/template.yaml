@@ -14,12 +14,12 @@ objects:
     labels:
       app: hdd-supervisor
       deploymentconfig: hdd-supervisor
-    name: supervisor
+    name: hdd-supervisor
     namespace: hdd-supervisor
   spec:
     containers:
       - image: >-
-          anmolbabu/supervisor
+          registry.centos.org/fabric8-hdd/openshift-hdd-supervisor:latest
         imagePullPolicy: Always
         name: hdd-supervisor
         ports:
@@ -97,7 +97,7 @@ objects:
       spec:
         containers:
           - image: >-
-              anmolbabu/supervisor
+              registry.centos.org/fabric8-hdd/openshift-hdd-supervisor:latest
             imagePullPolicy: Always
             name: hdd-supervisor
             ports:
@@ -113,6 +113,6 @@ objects:
             - hdd-supervisor
           from:
             kind: ImageStreamTag
-            name: 'supervisor:latest'
+            name: 'hdd-supervisor:latest'
             namespace: hdd-supervisor
         type: ImageChange

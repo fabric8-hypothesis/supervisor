@@ -1,6 +1,6 @@
-REGISTRY?=hub.docker.com
-REPOSITORY?=anmolbabu/supervisor
-DEFAULT_TAG=latest
+REGISTRY?=registry.centos.org
+REPOSITORY?=fabric8-hdd/openshift-hdd-supervisor
+DEFAULT_TAG=1.0.0
 
 .PHONY: all docker-build fast-docker-build test get-image-name get-image-repository docker-build-tests fast-docker-build-tests
 
