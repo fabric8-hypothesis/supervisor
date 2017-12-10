@@ -1,11 +1,21 @@
-FROM anmolbabu/supervisor
-MAINTAINER Anmol Babu <anmolbudugutta@gmail.com>
+FROM node:carbon
+LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
-COPY . /supervisor
-WORKDIR /supervisor
+# Create app directory
+WORKDIR /usr/src/app
 
-EXPOSE 9090
+# Install app dependencies
+COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
 
 RUN npm install
-RUN nohup npm start & > /dev/null
+# If you are building your code for production
+# RUN npm install --only=production
+
+# Bundle app source
+COPY . .
+
+# Hack to bust the cache. Refer to run_tests.sh file.
+ARG CACHEBUST=1
+
 RUN npm test
