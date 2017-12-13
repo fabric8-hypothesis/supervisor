@@ -1,4 +1,4 @@
-FROM centos:centos7
+FROM registry.centos.org/centos/centos:7
 LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
 # Setup App Dir
