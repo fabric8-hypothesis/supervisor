@@ -18,15 +18,25 @@ prep() {
 }
 
 build_image() {
-    # build image and tests
+    #tests
     make docker-build-tests
+
+    #build production image
+    make docker-build
 }
+
 
 tag_push() {
     local target=$1
     local source=$2
     docker tag ${source} ${target}
     docker push ${target}
+
+    if [ $? -eq 0 ]; then
+         echo "CICO: Image ${target} pushed, ready to update deployed app"
+    else
+        echo "ERROR OCCURED WHILE PUSHING THE IMAGE"
+    fi
 }
 
 push_image() {
@@ -38,7 +48,7 @@ push_image() {
     image_repository=$(make get-image-repository)
     short_commit=$(git rev-parse --short=7 HEAD)
     push_registry="push.registry.devshift.net"
-
+    
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
         docker login -u ${DEVSHIFT_USERNAME} -p ${DEVSHIFT_PASSWORD} ${push_registry}
@@ -58,7 +68,6 @@ push_image() {
         tag_push ${push_registry}/${image_repository}:${short_commit} ${image_name}
     fi
 
-    echo 'CICO: Image pushed, ready to update deployed app'
 }
 
 load_jenkins_vars
