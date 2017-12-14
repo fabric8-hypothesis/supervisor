@@ -30,5 +30,11 @@ USER node
 # Expose port
 EXPOSE 9090
 
+# Hack to bust the cache. Refer to run_tests.sh file.
+ARG CACHEBUST=1
+
+#Running the tests
+RUN npm test
+
 # Start app
-CMD [ "npm", "test" ]
+CMD [ "npm", "start" ]
