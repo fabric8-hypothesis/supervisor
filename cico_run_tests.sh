@@ -1,12 +1,11 @@
 
 #!/bin/bash
 
-. cico_setup.sh
+. ./cico_setup.sh
 
-TAG="test"
-TEST_IMAGE_NAME="$(make get-image-name):$TAG"
+TEST_IMAGE_NAME="$(make get-test-image-name)"
 
-./run_tests.sh
+. ./run_tests.sh
 
 if [ $? -eq 0 ]
 then
