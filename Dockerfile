@@ -1,5 +1,6 @@
-FROM registry.centos.org/centos/centos:7
-LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
+ARG VERSION="8.9.2"
+ARG NPM_VERSION="5.5.0"
+FROM anmolbabu/nodejs:${VERSION}_npm_${NPM_VERSION}
 
 # Setup App Dir
 RUN mkdir -p /usr/src/app
@@ -8,11 +9,6 @@ WORKDIR /usr/src/app
 # Install app dependencies
 ADD package.json ./package.json
 ADD package-lock.json ./package-lock.json
-
-#Install nodejs
-RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - && \
-    yum install nodejs -y && \
-    yum clean all
 
 # Install app
 RUN npm install --production
@@ -25,6 +21,7 @@ RUN groupadd -r node \
     && useradd -r -g node node
 
 # Switch to non-root user
+ENV USER node
 USER node
 
 # Expose port
