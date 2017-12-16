@@ -17,8 +17,7 @@ node {
         }
     }
     stage('Run UTs') {
-        sh 'npm install'
-        sh 'npm test'
+        sh './run_tests.sh'
     }
     stage('Build and tag docker image') {
         docker.build(image.id, '--pull --no-cache .')
