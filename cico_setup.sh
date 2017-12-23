@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+. version.sh
+
 load_jenkins_vars() {
     if [ -e "jenkins-env" ]; then
         cat jenkins-env \
@@ -10,21 +12,46 @@ load_jenkins_vars() {
     fi
 }
 
+prep_node_base_image() {
+    local image_name
+    local default_tag
+    local full_image_name
+    push_registry=$(make get-registry)
+    # login first
+    if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
+        docker login -u ${DEVSHIFT_USERNAME} -p ${DEVSHIFT_PASSWORD} ${push_registry}
+    else
+        echo "Could not login, missing credentials for the registry"
+        exit 1
+    fi
+    default_tag=$(make get-image-tag)
+    for version in "${VERSIONS[@]}" ; do
+        IFS=: read node_version npm_version <<< $version
+        image_name=$(make REPOSITORY="nodejs" TAG=${node_version}_npm_${npm_version} get-image-name)
+        build_image ${node_version}_npm_${npm_version} Dockerfile.nodejs ${node_version} ${npm_version} $(make get-nodejs-repo)
+        tag_push ${image_name} ${image_name}
+    done
+    build_image ${default_tag} Dockerfile.nodejs ${node_version} ${npm_version} $(make get-nodejs-repo)
+    image_name=$(make REPOSITORY="nodejs" get-image-name)
+    tag_push ${image_name} ${image_name}
+}
+
 prep() {
     yum -y update
     curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
-    yum -y install docker git nodejs
+    yum -y install yum-utils device-mapper-persistent-data lvm2 git nodejs
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum -y install docker-ce
     systemctl start docker
 }
 
-build_image() {
-    #tests
-    make docker-build-tests
-
-    #build production image
-    make docker-build
+test_image() {
+    make TAG=${1:-latest} NODE_VERSION=$2 NPM_VERSION=$3 docker-build-tests
 }
 
+build_image() {
+    make TAG=$1 DOCKERFILE=$2 NODE_VERSION=$3 NPM_VERSION=$4 REPOSITORY=$5 docker-build
+}
 
 tag_push() {
     local target=$1
@@ -39,16 +66,14 @@ tag_push() {
     fi
 }
 
-push_image() {
+push_images() {
+    local TAG
     local image_name
-    local image_repository
-    local short_commit
     local push_registry
-    image_name=$(make get-image-name)
-    image_repository=$(make get-image-repository)
-    short_commit=$(git rev-parse --short=7 HEAD)
-    push_registry="push.registry.devshift.net"
-    
+    # Remember last UT pass node and npm versions for tagging the corresponding image as latest
+    local latest_node_version
+    local latest_npm_version
+    push_registry=$(make get-registry)
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
         docker login -u ${DEVSHIFT_USERNAME} -p ${DEVSHIFT_PASSWORD} ${push_registry}
@@ -56,19 +81,29 @@ push_image() {
         echo "Could not login, missing credentials for the registry"
         exit 1
     fi
-
-    if [ -n "${ghprbPullId}" ]; then
-        # PR build
-        pr_id="SNAPSHOT-PR-${ghprbPullId}"
-        tag_push ${push_registry}/${image_repository}:${pr_id} ${image_name}
-        tag_push ${push_registry}/${image_repository}:${pr_id}-${short_commit} ${image_name}
-    else
-        # master branch build
-        tag_push ${push_registry}/${image_repository}:latest ${image_name}
-        tag_push ${push_registry}/${image_repository}:${short_commit} ${image_name}
-    fi
-
+    for version in "${VERSIONS[@]}" ; do
+        IFS=: read node_version npm_version <<< $version
+        # Test image
+        TAG=$(make NODE_VERSION=${node_version} NPM_VERSION=${npm_version} get-image-tag)
+        image_name=$(make TAG=${TAG} get-image-name)
+        test_image ${TAG} ${node_version} ${npm_version}
+        # If tests passed only then build, tag and push main image
+        if [ $? -eq 0 ]; then
+            build_image ${TAG} $(make get-docker-file) ${node_version} ${npm_version} $(make get-repository)
+            latest_node_version=$node_version
+            latest_npm_version=$npm_version
+            tag_push ${image_name} ${image_name}
+        else
+            echo "Tests failed for tag ${TAG}"
+        fi
+    done
+    # Tag last successful UT pass node and npm versions as latest
+    TAG=$(make get-image-tag)
+    image_name=$(make TAG=${TAG} get-image-name)
+    build_image ${TAG} $(make get-docker-file) ${latest_node_version} ${latest_npm_version} $(make get-repository)
+    tag_push ${image_name} ${image_name}
 }
 
 load_jenkins_vars
 prep
+prep_node_base_image
