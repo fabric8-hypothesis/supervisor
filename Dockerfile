@@ -1,6 +1,7 @@
 ARG VERSION="8.9.2"
 ARG NPM_VERSION="5.5.0"
-FROM anmolbabu/nodejs:${VERSION}_npm_${NPM_VERSION}
+FROM registry.devshift.net/nodejs:${VERSION}_npm_${NPM_VERSION}
+LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
 # Setup App Dir
 RUN mkdir -p /usr/src/app

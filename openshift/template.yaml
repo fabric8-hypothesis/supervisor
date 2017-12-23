@@ -19,7 +19,7 @@ objects:
   spec:
     containers:
       - image: >-
-          registry.centos.org/fabric8-hdd/openshift-hdd-supervisor:latest
+          registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:latest
         imagePullPolicy: Always
         name: hdd-supervisor
         ports:
@@ -97,7 +97,7 @@ objects:
       spec:
         containers:
           - image: >-
-              registry.centos.org/fabric8-hdd/openshift-hdd-supervisor:latest
+              registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:latest
             imagePullPolicy: Always
             name: hdd-supervisor
             ports:
