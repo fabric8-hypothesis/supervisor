@@ -33,5 +33,11 @@ ARG CACHEBUST=1
 #Running the tests
 RUN npm test
 
+#Add the infra test script
+ADD run_infra_tests.sh ./run_infra_tests.sh
+
+#Running the infra tests
+RUN ./run_infra_tests.sh -node ${VERSION} -npm ${NPM_VERSION} -os ${OS_NAME} -osv ${OS_VERSION}
+
 # Start app
 CMD [ "npm", "start" ]

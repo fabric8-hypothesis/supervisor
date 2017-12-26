@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-. version.sh
+. constants.sh
 
 load_jenkins_vars() {
     if [ -e "jenkins-env" ]; then
