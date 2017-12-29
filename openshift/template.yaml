@@ -22,13 +22,16 @@ objects:
           registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:latest
         imagePullPolicy: Always
         name: hdd-supervisor
+        env:
+        - name: HDD_SUPERVISOR_PORT
+          value: ${SUPERVISOR_PORT}
         ports:
-        - containerPort: 9090
+        - containerPort: ${{SUPERVISOR_PORT}}
           protocol: TCP
         readinessProbe:
           httpGet:
             path: /api/v1.0/readiness
-            port: 9090
+            port: ${{SUPERVISOR_PORT}}
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 60
@@ -36,7 +39,7 @@ objects:
         livenessProbe:
           httpGet:
             path: /api/v1.0/liveness
-            port: 9090
+            port: ${{SUPERVISOR_PORT}}
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 60
@@ -60,10 +63,10 @@ objects:
     namespace: hdd-supervisor
   spec:
     ports:
-      - name: 9090-tcp
-        port: 9090
+      - name: supervisor-tcp
+        port: ${{SUPERVISOR_PORT}}
         protocol: TCP
-        targetPort: 9090
+        targetPort: ${{SUPERVISOR_PORT}}
     selector:
       deploymentconfig: hdd-supervisor
 - apiVersion: v1
@@ -72,8 +75,9 @@ objects:
     name: hdd-supervisor
     namespace: hdd-supervisor
   spec:
+    host: ${SUPERVISOR_HOSTNAME}
     port:
-      targetPort: 9090-tcp
+      targetPort: supervisor-tcp
     to:
       kind: Service
       name: hdd-supervisor
@@ -101,7 +105,7 @@ objects:
             imagePullPolicy: Always
             name: hdd-supervisor
             ports:
-              - containerPort: 9090
+              - containerPort: ${{SUPERVISOR_PORT}}
                 protocol: TCP
             resources: {}
         dnsPolicy: ClusterFirst
@@ -116,3 +120,12 @@ objects:
             name: 'hdd-supervisor:latest'
             namespace: hdd-supervisor
         type: ImageChange
+
+parameters:
+- name: SUPERVISOR_PORT
+  description: Port number that supervisor service will be exposed on.
+  required: true
+  value: "9090"
+- name: SUPERVISOR_HOSTNAME
+  description: Parameterised hostname route for the supervisor service.
+  required: false

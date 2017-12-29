@@ -27,6 +27,11 @@ case $key in
     shift # past argument
     shift # past value
     ;;
+    -port)
+    PORT="$2"
+    shift # past argument
+    shift # past value
+    ;;
     *)
     shift
     ;;
@@ -49,6 +54,14 @@ if [ $(expr ${npm_ver} \== ${NPM_VER}) == 1 ]; then
     echo "Required version of npm is installed"
 else 
     echo "Npm version test failed"
+fi
+
+#Running the PORT infra test
+
+if [ $(expr ${PORT} \== ${HDD_SUPERVISOR_PORT} == 1) ]; then
+    echo "Required PORT is configured"
+else
+    echo "PORT test failed"
 fi
 
 #Running the OS infra test
