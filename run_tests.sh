@@ -27,13 +27,13 @@ for version in "${VERSIONS[@]}" ; do
     IFS=: read node_version npm_version <<< $version
     tag="$(make NODE_VERSION=${node_version} NPM_VERSION=${npm_version} get-image-tag)"
     TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"     
-    docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=fedora --build-arg OS_VERSION=25 .
+    docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=${DEFAULT_OS} --build-arg OS_VERSION=25 .
     tag_push ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 done
 
 tag="$(make get-image-tag)"
 TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"     
-docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=fedora --build-arg OS_VERSION=25 .
+docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=${DEFAULT_OS} --build-arg OS_VERSION=25 .
 tag_push ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 
 set +x

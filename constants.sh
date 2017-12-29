@@ -11,3 +11,6 @@ OS=(
 	"centos"
 	"unix"
 )
+
+DEFAULT_PORT=9090
+DEFAULT_OS="centos"
