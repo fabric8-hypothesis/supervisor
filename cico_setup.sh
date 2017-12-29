@@ -46,11 +46,11 @@ prep() {
 }
 
 test_image() {
-    make TAG=${1:-latest} NODE_VERSION=$2 NPM_VERSION=$3 docker-build-tests
+    make TAG=${1:-latest} NODE_VERSION=$2 NPM_VERSION=$3 PORT=$4 docker-build-tests
 }
 
 build_image() {
-    make TAG=$1 DOCKERFILE=$2 NODE_VERSION=$3 NPM_VERSION=$4 REPOSITORY=$5 docker-build
+    make TAG=$1 DOCKERFILE=$2 NODE_VERSION=$3 NPM_VERSION=$4 REPOSITORY=$5 PORT=$6 docker-build
 }
 
 tag_push() {
@@ -73,6 +73,7 @@ push_images() {
     # Remember last UT pass node and npm versions for tagging the corresponding image as latest
     local latest_node_version
     local latest_npm_version
+    local port
     push_registry=$(make get-registry)
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
@@ -86,10 +87,12 @@ push_images() {
         # Test image
         TAG=$(make NODE_VERSION=${node_version} NPM_VERSION=${npm_version} get-image-tag)
         image_name=$(make TAG=${TAG} get-image-name)
-        test_image ${TAG} ${node_version} ${npm_version}
+        #passing 9999 as the PORT value
+        port=9999
+        test_image ${TAG} ${node_version} ${npm_version} ${port}
         # If tests passed only then build, tag and push main image
         if [ $? -eq 0 ]; then
-            build_image ${TAG} $(make get-docker-file) ${node_version} ${npm_version} $(make get-repository)
+            build_image ${TAG} $(make get-docker-file) ${node_version} ${npm_version} $(make get-repository) ${port}
             latest_node_version=$node_version
             latest_npm_version=$npm_version
             tag_push ${image_name} ${image_name}
@@ -100,7 +103,7 @@ push_images() {
     # Tag last successful UT pass node and npm versions as latest
     TAG=$(make get-image-tag)
     image_name=$(make TAG=${TAG} get-image-name)
-    build_image ${TAG} $(make get-docker-file) ${latest_node_version} ${latest_npm_version} $(make get-repository)
+    build_image ${TAG} $(make get-docker-file) ${latest_node_version} ${latest_npm_version} $(make get-repository) ${port}
     tag_push ${image_name} ${image_name}
 }
 

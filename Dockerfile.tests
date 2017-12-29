@@ -1,5 +1,6 @@
-ARG VERSION="8.9.2"
-ARG NPM_VERSION="5.5.0"
+ARG VERSION=8.9.2
+ARG NPM_VERSION=5.5.0
+
 FROM registry.devshift.net/nodejs:${VERSION}_npm_${NPM_VERSION}
 LABEL maintainer="Anmol Babu <anmolbudugutta@gmail.com>"
 
@@ -24,8 +25,13 @@ RUN groupadd -r node \
 # Switch to non-root user
 USER node
 
+ARG PORT=9090
+
+#Injecting environment variable inside container
+ENV HDD_SUPERVISOR_PORT ${PORT}
+
 # Expose port
-EXPOSE 9090
+EXPOSE ${PORT}
 
 # Hack to bust the cache. Refer to run_tests.sh file.
 ARG CACHEBUST=1
@@ -37,7 +43,7 @@ RUN npm test
 ADD run_infra_tests.sh ./run_infra_tests.sh
 
 #Running the infra tests
-RUN ./run_infra_tests.sh -node ${VERSION} -npm ${NPM_VERSION} -os ${OS_NAME} -osv ${OS_VERSION}
+RUN ./run_infra_tests.sh -node ${VERSION} -npm ${NPM_VERSION} -os ${OS_NAME} -osv ${OS_VERSION} -port ${PORT}
 
 # Start app
 CMD [ "npm", "start" ]
