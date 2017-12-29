@@ -87,8 +87,8 @@ push_images() {
         # Test image
         TAG=$(make NODE_VERSION=${node_version} NPM_VERSION=${npm_version} get-image-tag)
         image_name=$(make TAG=${TAG} get-image-name)
-        #passing 9999 as the PORT value
-        port=9999
+        port=$(grep "SUPERVISOR_PORT" openshift/supervisor.env | cut -d'=' -f 2)
+        if [[ -z $port ]]; then port=${DEFAULT_PORT}; fi
         test_image ${TAG} ${node_version} ${npm_version} ${port}
         # If tests passed only then build, tag and push main image
         if [ $? -eq 0 ]; then
