@@ -25,8 +25,11 @@ RUN groupadd -r node \
 ENV USER node
 USER node
 
+ARG PORT=9090
+ENV HDD_SUPERVISOR_PORT ${PORT}
+
 # Expose port
-EXPOSE 9090
+EXPOSE ${PORT}
 
 # Start app
 CMD [ "npm", "start" ]

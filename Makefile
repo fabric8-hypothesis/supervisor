@@ -3,17 +3,18 @@ ORGANIZATION?=fabric8-hdd
 REPOSITORY?=openshift-hdd-supervisor
 NODEJS_REPO?=nodejs
 DOCKERFILE?=Dockerfile
-TAG=latest
+TAG?=latest
+PORT?=9080
 
 .PHONY: all docker-build fast-docker-build test get-image-name docker-build-tests fast-docker-build-tests get-image-tag get-docker-file get-test-image-name get-registry get-nodejs-repo get-repository
 
 all: fast-docker-build
 
 docker-build:
-	docker build --no-cache -t $(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):$(TAG) --build-arg VERSION=$(NODE_VERSION) --build-arg NPM_VERSION=$(NPM_VERSION) -f $(DOCKERFILE) .
+	docker build --no-cache -t $(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):$(TAG) --build-arg VERSION=$(NODE_VERSION) --build-arg NPM_VERSION=$(NPM_VERSION) --build-arg PORT=$(PORT) -f $(DOCKERFILE) .
 
 docker-build-tests:
-	docker build --no-cache -t $(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY)-tests:$(TAG) --build-arg VERSION=$(NODE_VERSION) --build-arg NPM_VERSION=$(NPM_VERSION) -f Dockerfile.tests .
+	docker build --no-cache -t $(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY)-tests:$(TAG) --build-arg VERSION=$(NODE_VERSION) --build-arg NPM_VERSION=$(NPM_VERSION) --build-arg PORT=$(PORT) -f Dockerfile.tests .
 
 fast-docker-build:
 	docker build -t $(REGISTRY)/$(ORGANIZATION)/$(REPOSITORY):$(TAG) -f $(DOCKERFILE) .
