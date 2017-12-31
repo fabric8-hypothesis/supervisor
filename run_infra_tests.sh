@@ -70,7 +70,7 @@ match=0
 for os in "${OS[@]}"; do
     if [[ ${os,,} = "${OS_NAME,,}" ]]; then
         match=1
-        os_id="$(cat /etc/*-release | grep -i "^id" | cut -d'=' -f 2)"
+        os_id="$(cat /etc/*-release | grep -i "^id=" | cut -d'=' -f 2)"
         os_ver_id="$(cat /etc/*-release | grep -i "version_id" | cut -d'=' -f 2)"
         if [[ ($(expr ${os_id,,} \== ${OS_NAME,,}) == 1) && ($(expr ${os_ver_id,,} \== ${OS_VER,,}) == 1)  ]]; then 
             echo "Required version of OS is installed"
