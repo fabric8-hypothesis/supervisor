@@ -26,14 +26,14 @@ fi
 for version in "${VERSIONS[@]}" ; do
     IFS=: read node_version npm_version <<< $version
     tag="$(make NODE_VERSION=${node_version} NPM_VERSION=${npm_version} get-image-tag)"
-    TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"     
-    docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=${DEFAULT_OS} --build-arg OS_VERSION=25 .
+    TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"
+    docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} .
     tag_push ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 done
 
 tag="$(make get-image-tag)"
-TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"     
-docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} --build-arg OS_NAME=${DEFAULT_OS} --build-arg OS_VERSION=25 .
+TEST_IMAGE_NAME="$(make TAG=$tag get-test-image-name)"
+docker build -t $TEST_IMAGE_NAME -f Dockerfile.tests --build-arg CACHEBUST=$TEMP --build-arg VERSION=${node_version} --build-arg NPM_VERSION=${npm_version} .
 tag_push ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 
 set +x
@@ -56,7 +56,7 @@ dock_ver="$(docker info|grep "Server Version"|cut -d':' -f 2 | xargs)"
 required_dock_ver="17.08.0"
 if [ $(expr ${dock_ver} \>= ${required_dock_ver}) == 1 ]; then
     echo "Required version of docker is installed"
-else 
+else
     echo "Docker version test failed"
 fi
 
@@ -66,6 +66,6 @@ oc_ver="$(oc version | grep -i 'oc' | cut -d' ' -f 2)"
 required_oc_ver="3.6.0+c4dd4cf"
 if [ $(expr ${oc_ver//v} \== ${required_oc_ver}) == 1 ]; then
     echo "Required version of openshift is installed"
-else 
+else
     echo "Openshift version test failed"
 fi
