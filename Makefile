@@ -1,4 +1,4 @@
-REGISTRY?=registry.devshift.net
+REGISTRY?=push.registry.devshift.net
 ORGANIZATION?=fabric8-hdd
 REPOSITORY?=openshift-hdd-supervisor
 NODEJS_REPO?=nodejs
