@@ -8,53 +8,6 @@ metadata:
     description: hdd-supervisor
 objects:
 - apiVersion: v1
-  kind: Pod
-  metadata:
-    generateName: hdd-supervisor
-    labels:
-      app: hdd-supervisor
-      deploymentconfig: hdd-supervisor
-    name: hdd-supervisor
-    namespace: hdd-supervisor
-  spec:
-    containers:
-      - image: >-
-          registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:latest
-        imagePullPolicy: Always
-        name: hdd-supervisor
-        env:
-        - name: HDD_SUPERVISOR_PORT
-          value: ${SUPERVISOR_PORT}
-        ports:
-        - containerPort: ${{SUPERVISOR_PORT}}
-          protocol: TCP
-        readinessProbe:
-          httpGet:
-            path: /api/v1.0/readiness
-            port: ${{SUPERVISOR_PORT}}
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 60
-          timeoutSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /api/v1.0/liveness
-            port: ${{SUPERVISOR_PORT}}
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 60
-          timeoutSeconds: 10
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1024Mi"
-            cpu: "1000m"
-        securityContext:
-          privileged: false
-    dnsPolicy: ClusterFirst
-- apiVersion: v1
   kind: Service
   metadata:
     labels:
@@ -85,41 +38,59 @@ objects:
   kind: DeploymentConfig
   metadata:
     labels:
+      service: hdd-supervisor
       app: hdd-supervisor
     name: hdd-supervisor
     namespace: hdd-supervisor
   spec:
     replicas: 1
     selector:
-      app: hdd-supervisor
-      deploymentconfig: hdd-supervisor
+      service: hdd-supervisor
     template:
       metadata:
         labels:
           app: hdd-supervisor
-          deploymentconfig: hdd-supervisor
+          service: hdd-supervisor
       spec:
         containers:
           - image: >-
-              registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:latest
+              registry.devshift.net/fabric8-hdd/openshift-hdd-supervisor:${IMAGE_TAG}
             imagePullPolicy: Always
             name: hdd-supervisor
+            env:
+            - name: HDD_SUPERVISOR_PORT
+              value: ${SUPERVISOR_PORT}
             ports:
-              - containerPort: ${{SUPERVISOR_PORT}}
-                protocol: TCP
-            resources: {}
+            - containerPort: ${{SUPERVISOR_PORT}}
+              protocol: TCP
+            readinessProbe:
+              httpGet:
+                path: /api/v1.0/readiness
+                port: ${{SUPERVISOR_PORT}}
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 60
+              timeoutSeconds: 10
+            livenessProbe:
+              httpGet:
+                path: /api/v1.0/liveness
+                port: ${{SUPERVISOR_PORT}}
+                scheme: HTTP
+              initialDelaySeconds: 30
+              periodSeconds: 60
+              timeoutSeconds: 10
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "1024Mi"
+                cpu: "1000m"
+            securityContext:
+              privileged: false
         dnsPolicy: ClusterFirst
     triggers:
       - type: ConfigChange
-      - imageChangeParams:
-          automatic: true
-          containerNames:
-            - hdd-supervisor
-          from:
-            kind: ImageStreamTag
-            name: 'hdd-supervisor:latest'
-            namespace: hdd-supervisor
-        type: ImageChange
 
 parameters:
 - name: SUPERVISOR_PORT
@@ -129,3 +100,8 @@ parameters:
 - name: SUPERVISOR_HOSTNAME
   description: Parameterised hostname route for the supervisor service.
   required: false
+- description: Image tag
+  displayName: Image tag
+  required: true
+  name: IMAGE_TAG
+  value: "latest"
