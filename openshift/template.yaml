@@ -35,6 +35,82 @@ objects:
       kind: Service
       name: hdd-supervisor
 - apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: hdd-supervisor
+    name: hdd-supervisor-mongodb
+    namespace: hdd-supervisor
+  spec:
+    ports:
+      - name: mongo
+        port: 27017
+        protocol: TCP
+        targetPort: 27017
+    selector:
+      deploymentconfig: hdd-supervisor-mongodb
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: hdd-supervisor
+    name: hdd-supervisor-mongodb
+    namespace: hdd-supervisor
+  spec:
+    replicas: 1
+    selector:
+      name: hdd-supervisor-mongodb
+    template:
+      metadata:
+        labels:
+          name: hdd-supervisor-mongodb
+      spec:
+        containers:
+          - env:
+              - name: MONGODB_USER
+                value: hdd-supervisor
+              - name: MONGODB_PASSWORD
+                value: hdd-supervisor
+              - name: MONGODB_ADMIN_PASSWORD
+                value: hdd-supervisor
+              - name: MONGODB_DATABASE
+                value: hdd-supervisor
+            image: >-
+              centos/mongodb-32-centos7
+            imagePullPolicy: Always
+            livenessProbe:
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              tcpSocket:
+                port: 27017
+              timeoutSeconds: 1
+            name: mongodb
+            ports:
+              - containerPort: 27017
+                protocol: TCP
+            readinessProbe:
+              exec:
+                command:
+                  - /bin/sh
+                  - '-i'
+                  - '-c'
+                  - >-
+                    mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p
+                    $MONGODB_PASSWORD --eval="quit()"
+              failureThreshold: 3
+              initialDelaySeconds: 3
+              periodSeconds: 10
+              successThreshold: 1
+              timeoutSeconds: 1
+            resources:
+              limits:
+                memory: 512Mi
+            securityContext:
+              privileged: false
+        dnsPolicy: ClusterFirst
+    triggers:
+      - type: ConfigChange
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
