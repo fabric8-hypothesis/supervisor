@@ -74,6 +74,8 @@ push_images() {
     local latest_node_version
     local latest_npm_version
     local port
+    local short_commit
+    short_commit=$(git rev-parse --short=7 HEAD)
     push_registry=$(make get-registry)
     # login first
     if [ -n "${DEVSHIFT_USERNAME}" -a -n "${DEVSHIFT_PASSWORD}" ]; then
@@ -105,6 +107,8 @@ push_images() {
     image_name=$(make TAG=${TAG} get-image-name)
     build_image ${TAG} $(make get-docker-file) ${latest_node_version} ${latest_npm_version} $(make get-repository) ${port}
     tag_push ${image_name} ${image_name}
+    target_image_name=$(make TAG=${short_commit} get-image-name)
+    tag_push ${target_image_name} ${image_name}
 }
 
 load_jenkins_vars
