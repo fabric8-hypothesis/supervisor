@@ -43,7 +43,7 @@ RUN npm test
 ADD run_infra_tests.sh ./run_infra_tests.sh
 
 #Running the infra tests
-RUN ./run_infra_tests.sh -node ${VERSION} -npm ${NPM_VERSION} -port ${PORT}
+RUN source run_infra_tests.sh; run_infra_tests -node ${VERSION} -npm ${NPM_VERSION} -port ${PORT}
 
 # Start app
 CMD [ "npm", "start" ]
