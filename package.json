@@ -25,9 +25,9 @@
   },
   "homepage": "https://github.com/fabric8-hdd/supervisor",
   "devDependencies": {
-    "eslint": "^4.12.1",
     "chai": "^3.5.0",
     "chai-http": "^2.0.1",
-    "mocha": "^2.4.5"    
+    "eslint": "^4.15.0",
+    "mocha": "^2.4.5"
   }
 }

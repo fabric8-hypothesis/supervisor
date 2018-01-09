@@ -14,13 +14,13 @@ var appRouter = function(app) {
 	}),
 
 	app.get("/api/v1.0/readiness", function(req , res){
-		res.status(200);
-		res.end();
+		res.status(200)
+		res.end()
 	}),
 
 	app.get("/api/v1.0/liveness", function(req , res){
-		res.status(200);
-		res.end();
+		res.status(200)
+		res.end()
 	})
 }
 
